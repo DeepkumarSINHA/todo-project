@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>To-Do Page</title>
+</head>
+<body>
+    <h1>To-Do Page</h1>
+
+    <form id="todoForm">
+        <div>
+            <label>Item Name:</label>
+            <input type="text" id="itemName" required />
+        </div>
+        <div>
+            <label>Item Description:</label>
+            <textarea id="itemDescription" required></textarea>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+
+    <p id="msg"></p>
+
+    <script>
+        const form = document.getElementById("todoForm");
+        const msg = document.getElementById("msg");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const itemName = document.getElementById("itemName").value;
+            const itemDescription = document.getElementById("itemDescription").value;
+
+            try {
+                const res = await fetch("http://localhost:5000/submittodoitem", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ itemName, itemDescription }),
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    msg.textContent = "To-Do item saved successfully!";
+                    form.reset();
+                } else {
+                    msg.textContent = data.message || "Error saving item";
+                }
+            } catch (error) {
+                msg.textContent = "Server error";
+            }
+        });
+    </script>
+</body>
+</html>
